@@ -1,6 +1,6 @@
 {
   "name": "askance",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Promise-based confirmation dialogs for React Native and Expo apps.",
   "type": "module",
   "files": [
