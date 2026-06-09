@@ -1,0 +1,65 @@
+{
+  "name": "dialogic",
+  "version": "0.1.0",
+  "description": "Promise-based dialogs for React Native and Expo apps.",
+  "type": "module",
+  "files": [
+    "build/**"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "./confirm-dialog": {
+      "types": "./build/confirm-dialog.d.ts",
+      "default": "./build/confirm-dialog.js"
+    },
+    "./confirm-dialog-host": {
+      "types": "./build/confirm-dialog-host.d.ts",
+      "default": "./build/confirm-dialog-host.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf build tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "lint": "eslint src tests --max-warnings 0",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
+    "release:patch": "release-patch",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "dialog",
+    "confirm",
+    "Dialogic"
+  ],
+  "repository": "https://github.com/kaspernj/dialogic",
+  "bugs": {
+    "url": "https://github.com/kaspernj/dialogic/issues"
+  },
+  "author": "kaspernj <k@spernj.org> (https://github.com/kaspernj)",
+  "license": "MIT",
+  "homepage": "https://github.com/kaspernj/dialogic#readme",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.76.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.14",
+    "eslint": "^9.39.1",
+    "globals": "^16.4.0",
+    "react": "^19.2.0",
+    "react-native": "^0.83.4",
+    "release-patch": "^1.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.46.0"
+  },
+  "sideEffects": false
+}

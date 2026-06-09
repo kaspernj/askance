@@ -1,0 +1,5 @@
+build/
+dialogic-*.tgz
+node_modules/
+tsconfig.build.tsbuildinfo
+tsconfig.tsbuildinfo
