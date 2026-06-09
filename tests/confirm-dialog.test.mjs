@@ -4,8 +4,10 @@ import {confirmDialog, resolveConfirmDialog, subscribeConfirmDialog} from "../bu
 
 test("resolves true when confirmed", async () => {
   let activeRequest
+  const activeMessages = []
   const unsubscribe = subscribeConfirmDialog((request) => {
     activeRequest = request
+    activeMessages.push(request?.message ?? null)
   })
 
   const promise = confirmDialog("Continue?")
@@ -13,6 +15,7 @@ test("resolves true when confirmed", async () => {
   assert.equal(activeRequest.message, "Continue?")
   resolveConfirmDialog(activeRequest.id, true)
   assert.equal(await promise, true)
+  assert.deepEqual(activeMessages, [null, "Continue?", null])
 
   unsubscribe()
 })
