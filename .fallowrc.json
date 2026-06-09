@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/**/*.{ts,tsx}",
+    "tests/**/*.mjs"
+  ],
+  "ignorePatterns": [
+    "build/**",
+    "node_modules/**"
+  ],
+  "ignoreDependencies": [
+    "@eslint/js",
+    "@types/react",
+    "eslint",
+    "globals",
+    "typescript",
+    "typescript-eslint"
+  ],
+  "duplicates": {
+    "minOccurrences": 3
+  }
+}

@@ -25,6 +25,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf build tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "fallow:audit": "fallow audit --gate new-only",
+    "fallow:ci": "fallow audit --base origin/master --gate new-only --quiet",
+    "fallow:scan": "fallow",
     "lint": "eslint src tests --max-warnings 0",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build",
@@ -55,6 +58,7 @@
     "@eslint/js": "^9.39.1",
     "@types/react": "^19.2.14",
     "eslint": "^9.39.1",
+    "fallow": "^2.88.3",
     "globals": "^16.4.0",
     "react": "^19.2.0",
     "react-native": "^0.83.4",

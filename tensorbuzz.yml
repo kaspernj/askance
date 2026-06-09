@@ -14,8 +14,9 @@ builds:
     script:
       - npm run test
   build_2:
-    name: ESLint & Typecheck
+    name: ESLint, Fallow & Typecheck
     script:
       - npm run lint
+      - npm run fallow:ci
       - npm run typecheck
       - npm run build
