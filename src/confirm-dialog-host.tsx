@@ -52,7 +52,7 @@ export default function ConfirmDialogHost({labels}: ConfirmDialogHostProps): Rea
   }
 
   const mergedLabels = {...defaultLabels, ...labels}
-  const testID = request.testID ?? "dialogic-confirm"
+  const testID = request.testID ?? "askance-confirm"
   const title = request.title ?? mergedLabels.title
 
   return (

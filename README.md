@@ -44,9 +44,9 @@ await confirmDialog({
 
 ## Test IDs
 
-The default dialog root is `dialogic-confirm`.
+The default dialog root is `askance-confirm`.
 
-- `dialogic-confirm-confirm`
-- `dialogic-confirm-cancel`
-- `dialogic-confirm-message`
-- `dialogic-confirm-title`
+- `askance-confirm-confirm`
+- `askance-confirm-cancel`
+- `askance-confirm-message`
+- `askance-confirm-title`
