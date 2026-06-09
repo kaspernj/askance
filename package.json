@@ -1,7 +1,7 @@
 {
-  "name": "react-native-dialogic",
+  "name": "askance",
   "version": "0.1.0",
-  "description": "Promise-based dialogs for React Native and Expo apps.",
+  "description": "Promise-based confirmation dialogs for React Native and Expo apps.",
   "type": "module",
   "files": [
     "build/**"
@@ -37,15 +37,16 @@
     "expo",
     "dialog",
     "confirm",
-    "Dialogic"
+    "askance",
+    "Askance"
   ],
-  "repository": "https://github.com/kaspernj/react-native-dialogic",
+  "repository": "https://github.com/kaspernj/askance",
   "bugs": {
-    "url": "https://github.com/kaspernj/react-native-dialogic/issues"
+    "url": "https://github.com/kaspernj/askance/issues"
   },
   "author": "kaspernj <k@spernj.org> (https://github.com/kaspernj)",
   "license": "MIT",
-  "homepage": "https://github.com/kaspernj/react-native-dialogic#readme",
+  "homepage": "https://github.com/kaspernj/askance#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.76.0"

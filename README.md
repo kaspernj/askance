@@ -1,13 +1,13 @@
-# react-native-dialogic
+# askance
 
-Promise-based dialogs for React Native and Expo apps.
+Promise-based confirmation dialogs for React Native and Expo apps.
 
 ## Usage
 
 Mount the host once near the app root:
 
 ```jsx
-import {ConfirmDialogHost} from "react-native-dialogic"
+import {ConfirmDialogHost} from "askance"
 
 export default function App() {
   return <ConfirmDialogHost />
@@ -17,7 +17,7 @@ export default function App() {
 Ask for confirmation from handlers:
 
 ```js
-import {confirmDialog} from "react-native-dialogic"
+import {confirmDialog} from "askance"
 
 if (await confirmDialog("Are you sure?")) {
   await model.destroy()
