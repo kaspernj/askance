@@ -1,5 +1,5 @@
 {
-  "name": "dialogic",
+  "name": "react-native-dialogic",
   "version": "0.1.0",
   "description": "Promise-based dialogs for React Native and Expo apps.",
   "type": "module",
@@ -39,13 +39,13 @@
     "confirm",
     "Dialogic"
   ],
-  "repository": "https://github.com/kaspernj/dialogic",
+  "repository": "https://github.com/kaspernj/react-native-dialogic",
   "bugs": {
-    "url": "https://github.com/kaspernj/dialogic/issues"
+    "url": "https://github.com/kaspernj/react-native-dialogic/issues"
   },
   "author": "kaspernj <k@spernj.org> (https://github.com/kaspernj)",
   "license": "MIT",
-  "homepage": "https://github.com/kaspernj/dialogic#readme",
+  "homepage": "https://github.com/kaspernj/react-native-dialogic#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.76.0"

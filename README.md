@@ -1,4 +1,4 @@
-# dialogic
+# react-native-dialogic
 
 Promise-based dialogs for React Native and Expo apps.
 
@@ -7,7 +7,7 @@ Promise-based dialogs for React Native and Expo apps.
 Mount the host once near the app root:
 
 ```jsx
-import {ConfirmDialogHost} from "dialogic"
+import {ConfirmDialogHost} from "react-native-dialogic"
 
 export default function App() {
   return <ConfirmDialogHost />
@@ -17,7 +17,7 @@ export default function App() {
 Ask for confirmation from handlers:
 
 ```js
-import {confirmDialog} from "dialogic"
+import {confirmDialog} from "react-native-dialogic"
 
 if (await confirmDialog("Are you sure?")) {
   await model.destroy()
