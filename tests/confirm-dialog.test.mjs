@@ -296,6 +296,82 @@ test("stacks action buttons full width on very small screens", async () => {
   }
 })
 
+test("applies the responsive card padding when no override is given", async () => {
+  let activeRequest
+  let confirmPromise
+  let renderer
+  const unsubscribe = subscribeConfirmDialog((request) => {
+    activeRequest = request
+  })
+
+  mockWindowWidth = 320
+
+  await act(async () => {
+    renderer = TestRenderer.create(React.createElement(ConfirmDialogHost))
+  })
+
+  try {
+    await act(async () => {
+      confirmPromise = confirmDialog("Delete this?")
+    })
+
+    const cardStyle = flattenStyle(renderer.root.findByProps({testID: "askance-confirm"}).props.style)
+
+    assert.equal(cardStyle.padding, 20)
+
+    await act(async () => {
+      resolveConfirmDialog(activeRequest.id, false)
+    })
+
+    assert.equal(await confirmPromise, false)
+  } finally {
+    mockWindowWidth = 1024
+    unsubscribe()
+
+    await act(async () => {
+      renderer.unmount()
+    })
+  }
+})
+
+test("preserves a consumer card padding override over the responsive padding", async () => {
+  let activeRequest
+  let confirmPromise
+  let renderer
+  const unsubscribe = subscribeConfirmDialog((request) => {
+    activeRequest = request
+  })
+
+  mockWindowWidth = 320
+
+  await act(async () => {
+    renderer = TestRenderer.create(React.createElement(ConfirmDialogHost, {styles: {card: {padding: 7}}}))
+  })
+
+  try {
+    await act(async () => {
+      confirmPromise = confirmDialog("Delete this?")
+    })
+
+    const cardStyle = flattenStyle(renderer.root.findByProps({testID: "askance-confirm"}).props.style)
+
+    assert.equal(cardStyle.padding, 7)
+
+    await act(async () => {
+      resolveConfirmDialog(activeRequest.id, false)
+    })
+
+    assert.equal(await confirmPromise, false)
+  } finally {
+    mockWindowWidth = 1024
+    unsubscribe()
+
+    await act(async () => {
+      renderer.unmount()
+    })
+  }
+})
+
 /**
  * @param {unknown} style - A React Native style prop (object or nested array).
  * @returns {Record<string, unknown>} Flattened style object.

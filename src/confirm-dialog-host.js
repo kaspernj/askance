@@ -159,7 +159,6 @@ const defaultStyles = {
     borderWidth: 1,
     elevation: 18,
     maxWidth: 520,
-    padding: 28,
     shadowColor: "#000000",
     shadowOffset: {height: 28, width: 0},
     shadowOpacity: 0.48,
@@ -203,7 +202,6 @@ const defaultStyles = {
     bottom: 0,
     justifyContent: "center",
     left: 0,
-    padding: 18,
     position: "absolute",
     right: 0,
     top: 0
@@ -351,7 +349,7 @@ class ActiveConfirmDialog extends Component {
 
     return (
       <Modal onRequestClose={this.onCancelPress} testID={testIDs.modal} transparent visible>
-        <View style={[resolvedStyles.overlay, {padding: layout.overlayPadding}]} testID={testIDs.overlay}>
+        <View style={[{padding: layout.overlayPadding}, resolvedStyles.overlay]} testID={testIDs.overlay}>
           <Pressable onPress={this.onCancelPress} style={resolvedStyles.backdrop} testID={testIDs.backdrop} />
           <ConfirmDialogDisplay
             cancelLabel={labelOrDefault(request.cancelLabel, labels.cancel)}
@@ -405,7 +403,7 @@ function resolveTestIDs(request) {
  */
 function ConfirmDialogDisplay({cancelLabel, confirmLabel, layout, request, resolvedStyles, testIDs, title}) {
   return (
-    <View accessibilityRole="alert" style={[resolvedStyles.card, {padding: layout.cardPadding}]} testID={testIDs.root}>
+    <View accessibilityRole="alert" style={[{padding: layout.cardPadding}, resolvedStyles.card]} testID={testIDs.root}>
       <View style={resolvedStyles.accent} testID={testIDs.accent} />
       <Text style={resolvedStyles.title} testID={testIDs.title}>
         {title}
