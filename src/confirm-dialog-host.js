@@ -341,7 +341,7 @@ class ActiveConfirmDialog extends Component {
     const testIDs = resolveTestIDs(request)
 
     return (
-      <Modal onRequestClose={this.onCancelPress} transparent visible>
+      <Modal onRequestClose={this.onCancelPress} testID={testIDs.modal} transparent visible>
         <View style={resolvedStyles.overlay} testID={testIDs.overlay}>
           <Pressable onPress={this.onCancelPress} style={resolvedStyles.backdrop} testID={testIDs.backdrop} />
           <ConfirmDialogDisplay
@@ -382,6 +382,7 @@ function resolveTestIDs(request) {
     confirmLabel: labelOrDefault(customTestIDs.confirmLabel, `${baseTestID}-confirm-label`),
     content: labelOrDefault(customTestIDs.content, `${baseTestID}-content`),
     message: labelOrDefault(customTestIDs.message, `${baseTestID}-message`),
+    modal: labelOrDefault(customTestIDs.modal, `${baseTestID}-modal`),
     overlay: labelOrDefault(customTestIDs.overlay, `${baseTestID}-overlay`),
     root: baseTestID,
     title: labelOrDefault(customTestIDs.title, `${baseTestID}-title`)

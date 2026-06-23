@@ -102,6 +102,52 @@ test("preserves customized dialog options for hosts", async () => {
   unsubscribe()
 })
 
+test("applies custom modal overlay and root test ids to distinct host elements", async () => {
+  let activeRequest
+  let confirmPromise
+  let renderer
+  const unsubscribe = subscribeConfirmDialog((request) => {
+    activeRequest = request
+  })
+
+  await act(async () => {
+    renderer = TestRenderer.create(React.createElement(ConfirmDialogHost))
+  })
+
+  try {
+    await act(async () => {
+      confirmPromise = confirmDialog({
+        message: "Remove this?",
+        testIDs: {
+          modal: "customModal",
+          overlay: "customOverlay",
+          root: "customCard"
+        }
+      })
+    })
+
+    assert.equal(renderer.root.findByType("Modal").props.testID, "customModal")
+    assert.equal(renderer.root.findByProps({testID: "customOverlay"}).props.testID, "customOverlay")
+    assert.equal(renderer.root.findByProps({testID: "customCard"}).props.testID, "customCard")
+
+    await act(async () => {
+      resolveConfirmDialog(activeRequest.id, false)
+    })
+
+    assert.equal(await confirmPromise, false)
+  } finally {
+    if (activeRequest) {
+      resolveConfirmDialog(activeRequest.id, false)
+    }
+
+    unsubscribe()
+
+    await act(async () => {
+      renderer.unmount()
+    })
+  }
+})
+
 test("wraps primitive custom content in text for React Native", async () => {
   let activeRequest
   let confirmPromise

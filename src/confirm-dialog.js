@@ -11,6 +11,7 @@
  * @property {string=} confirmLabel - TestID for the confirm button label.
  * @property {string=} content - TestID for the custom content wrapper.
  * @property {string=} message - TestID for the message text.
+ * @property {string=} modal - TestID for the native modal.
  * @property {string=} overlay - TestID for the overlay container.
  * @property {string=} root - TestID for the dialog card.
  * @property {string=} title - TestID for the title text.
