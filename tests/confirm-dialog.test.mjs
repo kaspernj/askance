@@ -4,8 +4,11 @@ import esmock from "esmock"
 import React from "react"
 import TestRenderer, {act} from "react-test-renderer"
 import {confirmDialog, resolveConfirmDialog, subscribeConfirmDialog} from "../build/confirm-dialog.js"
+import {responsiveLayout} from "../build/responsive-layout.js"
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
+
+let mockWindowWidth = 1024
 
 const reactNativeMock = {
   Modal: componentFor("Modal"),
@@ -14,6 +17,7 @@ const reactNativeMock = {
   View: componentFor("View")
 }
 const {default: ConfirmDialogHost} = await esmock.strict("../build/confirm-dialog-host.js", {
+  "react-native": {useWindowDimensions: () => ({height: 800, width: mockWindowWidth})},
   "react-native-propforge": reactNativeMock
 })
 
@@ -239,3 +243,71 @@ test("uses default text styling for primitive custom content without overrides",
     })
   }
 })
+
+test("responsiveLayout stacks and stretches buttons on very small screens", () => {
+  assert.deepEqual(responsiveLayout(320), {cardPadding: 20, fullWidthButtons: true, overlayPadding: 12, stackActions: true})
+})
+
+test("responsiveLayout keeps a row but stretches buttons on small screens", () => {
+  assert.deepEqual(responsiveLayout(480), {cardPadding: 24, fullWidthButtons: true, overlayPadding: 14, stackActions: false})
+})
+
+test("responsiveLayout keeps the default content-width layout on large screens", () => {
+  assert.deepEqual(responsiveLayout(900), {cardPadding: 28, fullWidthButtons: false, overlayPadding: 18, stackActions: false})
+})
+
+test("stacks action buttons full width on very small screens", async () => {
+  let activeRequest
+  let confirmPromise
+  let renderer
+  const unsubscribe = subscribeConfirmDialog((request) => {
+    activeRequest = request
+  })
+
+  mockWindowWidth = 320
+
+  await act(async () => {
+    renderer = TestRenderer.create(React.createElement(ConfirmDialogHost))
+  })
+
+  try {
+    await act(async () => {
+      confirmPromise = confirmDialog("Delete this?")
+    })
+
+    const actionsStyle = flattenStyle(renderer.root.findByProps({testID: "askance-confirm-actions"}).props.style)
+    const cancelStyle = flattenStyle(renderer.root.findByProps({testID: "askance-confirm-cancel"}).props.style)
+
+    assert.equal(actionsStyle.flexDirection, "column")
+    assert.equal(cancelStyle.alignSelf, "stretch")
+
+    await act(async () => {
+      resolveConfirmDialog(activeRequest.id, false)
+    })
+
+    assert.equal(await confirmPromise, false)
+  } finally {
+    mockWindowWidth = 1024
+    unsubscribe()
+
+    await act(async () => {
+      renderer.unmount()
+    })
+  }
+})
+
+/**
+ * @param {unknown} style - A React Native style prop (object or nested array).
+ * @returns {Record<string, unknown>} Flattened style object.
+ */
+function flattenStyle(style) {
+  if (Array.isArray(style)) {
+    return style.reduce((merged, part) => Object.assign(merged, flattenStyle(part)), {})
+  }
+
+  if (style && typeof style === "object") {
+    return style
+  }
+
+  return {}
+}
