@@ -1,12 +1,31 @@
 // @ts-check
 
 /**
+ * @typedef {object} ConfirmDialogTestIDs
+ * @property {string=} accent - TestID for the accent element.
+ * @property {string=} actions - TestID for the actions container.
+ * @property {string=} backdrop - TestID for the backdrop press target.
+ * @property {string=} cancel - TestID for the cancel button.
+ * @property {string=} cancelLabel - TestID for the cancel button label.
+ * @property {string=} confirm - TestID for the confirm button.
+ * @property {string=} confirmLabel - TestID for the confirm button label.
+ * @property {string=} content - TestID for the custom content wrapper.
+ * @property {string=} message - TestID for the message text.
+ * @property {string=} overlay - TestID for the overlay container.
+ * @property {string=} root - TestID for the dialog card.
+ * @property {string=} title - TestID for the title text.
+ */
+
+/**
  * @typedef {object} ConfirmDialogOptions
  * @property {string=} cancelLabel - Label for the cancel action.
  * @property {string=} confirmLabel - Label for the confirm action.
+ * @property {boolean=} confirmDisabled - Whether the confirm action is disabled.
+ * @property {import("react").ReactNode=} content - Optional custom body content rendered after the message.
  * @property {boolean=} danger - Whether the confirm action should use danger styling.
  * @property {string} message - Message shown in the dialog body.
  * @property {string=} testID - Base testID used for the dialog elements.
+ * @property {ConfirmDialogTestIDs=} testIDs - Explicit testIDs for dialog elements.
  * @property {string=} title - Optional dialog title.
  */
 
@@ -111,11 +130,14 @@ function activeRequestWithoutResolver() {
 
   return {
     cancelLabel: activeRequest.cancelLabel,
+    confirmDisabled: activeRequest.confirmDisabled,
     confirmLabel: activeRequest.confirmLabel,
+    content: activeRequest.content,
     danger: activeRequest.danger,
     id: activeRequest.id,
     message: activeRequest.message,
     testID: activeRequest.testID,
+    testIDs: activeRequest.testIDs,
     title: activeRequest.title
   }
 }

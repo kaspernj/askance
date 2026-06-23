@@ -6,5 +6,7 @@ export {default as ConfirmDialogHost} from "./confirm-dialog-host.js"
 /** @typedef {import("./confirm-dialog.js").ConfirmDialogOptions} ConfirmDialogOptions */
 /** @typedef {import("./confirm-dialog.js").ConfirmDialogRequest} ConfirmDialogRequest */
 /** @typedef {import("./confirm-dialog.js").ConfirmDialogSubscriber} ConfirmDialogSubscriber */
+/** @typedef {import("./confirm-dialog.js").ConfirmDialogTestIDs} ConfirmDialogTestIDs */
 /** @typedef {import("./confirm-dialog-host.js").ConfirmDialogHostLabels} ConfirmDialogHostLabels */
 /** @typedef {import("./confirm-dialog-host.js").ConfirmDialogHostProps} ConfirmDialogHostProps */
+/** @typedef {import("./confirm-dialog-host.js").ConfirmDialogHostStyles} ConfirmDialogHostStyles */

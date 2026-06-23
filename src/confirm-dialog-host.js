@@ -5,6 +5,7 @@ import {Modal, Pressable, Text, View} from "react-native"
 import {resolveConfirmDialog, subscribeConfirmDialog} from "./confirm-dialog.js"
 
 /** @typedef {import("./confirm-dialog.js").ConfirmDialogRequest} ConfirmDialogRequest */
+/** @typedef {import("./confirm-dialog.js").ConfirmDialogTestIDs} ConfirmDialogTestIDs */
 
 /**
  * @typedef {object} ConfirmDialogHostLabels
@@ -16,15 +17,37 @@ import {resolveConfirmDialog, subscribeConfirmDialog} from "./confirm-dialog.js"
 /**
  * @typedef {object} ConfirmDialogHostProps
  * @property {ConfirmDialogHostLabels=} labels - Optional default labels.
+ * @property {ConfirmDialogHostStyles=} styles - Optional styles merged onto the default dialog styles.
+ */
+
+/**
+ * @typedef {object} ConfirmDialogHostStyles
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} accent - Accent style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} actions - Actions container style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} backdrop - Backdrop style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} cancelButton - Cancel button style override.
+ * @property {import("react-native").StyleProp<import("react-native").TextStyle>=} cancelButtonText - Cancel button text style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} card - Card style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} confirmButton - Confirm button style override.
+ * @property {import("react-native").StyleProp<import("react-native").TextStyle>=} confirmButtonText - Confirm button text style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} content - Custom content wrapper style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} dangerButton - Danger confirm button style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} disabledButton - Disabled confirm button style override.
+ * @property {import("react-native").StyleProp<import("react-native").TextStyle>=} disabledButtonText - Disabled confirm button text style override.
+ * @property {import("react-native").StyleProp<import("react-native").TextStyle>=} message - Message text style override.
+ * @property {import("react-native").StyleProp<import("react-native").ViewStyle>=} overlay - Overlay style override.
+ * @property {import("react-native").StyleProp<import("react-native").TextStyle>=} title - Title text style override.
  */
 
 /**
  * @typedef {object} ConfirmDialogActionsProps
  * @property {string} cancelLabel - Label shown on the cancel button.
  * @property {string} confirmLabel - Label shown on the confirm button.
+ * @property {boolean=} confirmDisabled - Whether the confirm action is disabled.
  * @property {boolean=} danger - Whether to render the confirm button as dangerous.
  * @property {number} requestId - Active dialog request id.
- * @property {string} testID - Base testID used for the dialog elements.
+ * @property {ConfirmDialogHostStyles} styles - Host style overrides.
+ * @property {Required<ConfirmDialogTestIDs>} testIDs - Resolved testIDs for dialog elements.
  */
 
 /**
@@ -33,7 +56,8 @@ import {resolveConfirmDialog, subscribeConfirmDialog} from "./confirm-dialog.js"
  * @property {string} confirmLabel - Resolved confirm label.
  * @property {Required<ConfirmDialogHostLabels>} labels - Dialog labels.
  * @property {ConfirmDialogRequest} request - Active confirm dialog request.
- * @property {string} testID - Resolved base testID.
+ * @property {ConfirmDialogHostStyles} styles - Host style overrides.
+ * @property {Required<ConfirmDialogTestIDs>} testIDs - Resolved testIDs for dialog elements.
  * @property {string} title - Resolved title.
  */
 
@@ -41,6 +65,7 @@ import {resolveConfirmDialog, subscribeConfirmDialog} from "./confirm-dialog.js"
  * @typedef {object} ActiveConfirmDialogProps
  * @property {Required<ConfirmDialogHostLabels>} labels - Default labels.
  * @property {ConfirmDialogRequest} request - Active confirm dialog request.
+ * @property {ConfirmDialogHostStyles} styles - Host style overrides.
  */
 
 const defaultLabels = {
@@ -49,8 +74,11 @@ const defaultLabels = {
   title: "Confirm action"
 }
 
+/** @type {ConfirmDialogHostStyles} */
+const emptyStyles = {}
+
 /** @type {Record<string, object>} */
-const styles = {
+const defaultStyles = {
   actions: {
     alignItems: "center",
     flexDirection: "row",
@@ -110,11 +138,20 @@ const styles = {
     fontSize: 14,
     fontWeight: "800"
   },
+  content: {
+    marginTop: 16
+  },
   dangerButton: {
     backgroundColor: "#dc2626",
     borderRadius: 999,
     paddingHorizontal: 18,
     paddingVertical: 10
+  },
+  disabledButton: {
+    opacity: 0.42
+  },
+  disabledButtonText: {
+    color: "#d1d5db"
   },
   message: {
     color: "#cbd5e1",
@@ -144,9 +181,10 @@ const styles = {
  * @param {ConfirmDialogHostProps} props - Host props.
  * @returns {React.ReactElement | null} Dialog host element.
  */
-export default function ConfirmDialogHost({labels}) {
+export default function ConfirmDialogHost({labels, styles}) {
   const [request, setRequest] = useState(/** @type {ConfirmDialogRequest | null} */ (null))
   const mergedLabels = mergeLabels(labels)
+  const mergedStyles = styles || emptyStyles
 
   useEffect(() => subscribeConfirmDialog(setRequest), [])
 
@@ -155,7 +193,7 @@ export default function ConfirmDialogHost({labels}) {
       return
     }
 
-    const onKeyDown = keyDownHandler(request.id)
+    const onKeyDown = keyDownHandler(request.id, Boolean(request.confirmDisabled))
 
     document.addEventListener("keydown", onKeyDown)
 
@@ -168,7 +206,7 @@ export default function ConfirmDialogHost({labels}) {
     return null
   }
 
-  return <ActiveConfirmDialog labels={mergedLabels} request={request} />
+  return <ActiveConfirmDialog labels={mergedLabels} request={request} styles={mergedStyles} />
 }
 
 /**
@@ -202,18 +240,20 @@ class ActiveConfirmDialog extends Component {
   render() {
     const {request} = this.props
     const {labels} = this.props
-    const testID = labelOrDefault(request.testID, "askance-confirm")
+    const {styles} = this.props
+    const testIDs = resolveTestIDs(request)
 
     return (
       <Modal onRequestClose={this.onCancelPress} transparent visible>
-        <View style={styles.overlay} testID={`${testID}-overlay`}>
-          <Pressable onPress={this.onCancelPress} style={styles.backdrop} testID={`${testID}-backdrop`} />
+        <View style={[defaultStyles.overlay, styles.overlay]} testID={testIDs.overlay}>
+          <Pressable onPress={this.onCancelPress} style={[defaultStyles.backdrop, styles.backdrop]} testID={testIDs.backdrop} />
           <ConfirmDialogDisplay
             cancelLabel={labelOrDefault(request.cancelLabel, labels.cancel)}
             confirmLabel={labelOrDefault(request.confirmLabel, labels.confirm)}
             labels={labels}
             request={request}
-            testID={testID}
+            styles={styles}
+            testIDs={testIDs}
             title={labelOrDefault(request.title, labels.title)}
           />
         </View>
@@ -228,25 +268,56 @@ class ActiveConfirmDialog extends Component {
 }
 
 /**
+ * @param {ConfirmDialogRequest} request - Active dialog request.
+ * @returns {Required<ConfirmDialogTestIDs>} Resolved testID map.
+ */
+function resolveTestIDs(request) {
+  const customTestIDs = request.testIDs || {}
+  const baseTestID = labelOrDefault(customTestIDs.root || request.testID, "askance-confirm")
+
+  return {
+    accent: labelOrDefault(customTestIDs.accent, `${baseTestID}-accent`),
+    actions: labelOrDefault(customTestIDs.actions, `${baseTestID}-actions`),
+    backdrop: labelOrDefault(customTestIDs.backdrop, `${baseTestID}-backdrop`),
+    cancel: labelOrDefault(customTestIDs.cancel, `${baseTestID}-cancel`),
+    cancelLabel: labelOrDefault(customTestIDs.cancelLabel, `${baseTestID}-cancel-label`),
+    confirm: labelOrDefault(customTestIDs.confirm, `${baseTestID}-confirm`),
+    confirmLabel: labelOrDefault(customTestIDs.confirmLabel, `${baseTestID}-confirm-label`),
+    content: labelOrDefault(customTestIDs.content, `${baseTestID}-content`),
+    message: labelOrDefault(customTestIDs.message, `${baseTestID}-message`),
+    overlay: labelOrDefault(customTestIDs.overlay, `${baseTestID}-overlay`),
+    root: baseTestID,
+    title: labelOrDefault(customTestIDs.title, `${baseTestID}-title`)
+  }
+}
+
+/**
  * @param {ConfirmDialogDisplayProps} props - Display props.
  * @returns {React.ReactElement} Dialog content card.
  */
-function ConfirmDialogDisplay({cancelLabel, confirmLabel, request, testID, title}) {
+function ConfirmDialogDisplay({cancelLabel, confirmLabel, request, styles, testIDs, title}) {
   return (
-    <View accessibilityRole="alert" style={styles.card} testID={testID}>
-      <View style={styles.accent} testID={`${testID}-accent`} />
-      <Text style={styles.title} testID={`${testID}-title`}>
+    <View accessibilityRole="alert" style={[defaultStyles.card, styles.card]} testID={testIDs.root}>
+      <View style={[defaultStyles.accent, styles.accent]} testID={testIDs.accent} />
+      <Text style={[defaultStyles.title, styles.title]} testID={testIDs.title}>
         {title}
       </Text>
-      <Text style={styles.message} testID={`${testID}-message`}>
+      <Text style={[defaultStyles.message, styles.message]} testID={testIDs.message}>
         {request.message}
       </Text>
+      {request.content ? (
+        <View style={[defaultStyles.content, styles.content]} testID={testIDs.content}>
+          {request.content}
+        </View>
+      ) : null}
       <ConfirmDialogActions
         cancelLabel={cancelLabel}
         confirmLabel={confirmLabel}
+        confirmDisabled={request.confirmDisabled}
         danger={request.danger}
         requestId={request.id}
-        testID={testID}
+        styles={styles}
+        testIDs={testIDs}
       />
     </View>
   )
@@ -254,14 +325,15 @@ function ConfirmDialogDisplay({cancelLabel, confirmLabel, request, testID, title
 
 /**
  * @param {number} requestId - Active dialog request id.
+ * @param {boolean} confirmDisabled - Whether the confirm action is disabled.
  * @returns {(event: KeyboardEvent) => void} Keydown handler for the active dialog.
  */
-function keyDownHandler(requestId) {
+function keyDownHandler(requestId, confirmDisabled) {
   return (event) => {
     if (event.key === "Escape") {
       event.preventDefault()
       resolveConfirmDialog(requestId, false)
-    } else if (event.key === "Enter") {
+    } else if (event.key === "Enter" && !confirmDisabled) {
       event.preventDefault()
       resolveConfirmDialog(requestId, true)
     }
@@ -276,22 +348,87 @@ function keyDownHandler(requestId) {
 class ConfirmDialogActions extends Component {
   /** @override @returns {React.ReactElement} Dialog action buttons. */
   render() {
-    const {cancelLabel, confirmLabel, danger, testID} = this.props
+    const {cancelLabel, confirmLabel, styles, testIDs} = this.props
 
     return (
-      <View style={styles.actions} testID={`${testID}-actions`}>
-        <Pressable onPress={this.onCancelPress} style={styles.cancelButton} testID={`${testID}-cancel`}>
-          <Text style={styles.cancelButtonText} testID={`${testID}-cancel-label`}>
+      <View style={[defaultStyles.actions, styles.actions]} testID={testIDs.actions}>
+        <Pressable onPress={this.onCancelPress} style={[defaultStyles.cancelButton, styles.cancelButton]} testID={testIDs.cancel}>
+          <Text style={[defaultStyles.cancelButtonText, styles.cancelButtonText]} testID={testIDs.cancelLabel}>
             {cancelLabel}
           </Text>
         </Pressable>
-        <Pressable onPress={this.onConfirmPress} style={danger ? styles.dangerButton : styles.confirmButton} testID={`${testID}-confirm`}>
-          <Text style={styles.confirmButtonText} testID={`${testID}-confirm-label`}>
+        <Pressable
+          accessibilityState={this.confirmAccessibilityState()}
+          disabled={this.props.confirmDisabled}
+          onPress={this.onConfirmPress}
+          style={this.confirmButtonStyle()}
+          testID={testIDs.confirm}
+        >
+          <Text style={this.confirmButtonTextStyle()} testID={testIDs.confirmLabel}>
             {confirmLabel}
           </Text>
         </Pressable>
       </View>
     )
+  }
+
+  /** @returns {{disabled: true} | undefined} Accessibility state for the confirm button. */
+  confirmAccessibilityState() {
+    if (this.props.confirmDisabled) {
+      return {disabled: true}
+    }
+
+    return undefined
+  }
+
+  /** @returns {import("react-native").StyleProp<import("react-native").ViewStyle>} Style for the confirm button. */
+  confirmButtonStyle() {
+    const {styles} = this.props
+
+    return [
+      defaultStyles.confirmButton,
+      styles.confirmButton,
+      this.dangerButtonStyle(),
+      this.disabledButtonStyle()
+    ]
+  }
+
+  /** @returns {import("react-native").StyleProp<import("react-native").TextStyle>} Style for the confirm button text. */
+  confirmButtonTextStyle() {
+    const {styles} = this.props
+
+    return [
+      defaultStyles.confirmButtonText,
+      styles.confirmButtonText,
+      this.disabledButtonTextStyle()
+    ]
+  }
+
+  /** @returns {import("react-native").StyleProp<import("react-native").ViewStyle> | null} Danger button style when needed. */
+  dangerButtonStyle() {
+    if (!this.props.danger) {
+      return null
+    }
+
+    return [defaultStyles.dangerButton, this.props.styles.dangerButton]
+  }
+
+  /** @returns {import("react-native").StyleProp<import("react-native").ViewStyle> | null} Disabled button style when needed. */
+  disabledButtonStyle() {
+    if (!this.props.confirmDisabled) {
+      return null
+    }
+
+    return [defaultStyles.disabledButton, this.props.styles.disabledButton]
+  }
+
+  /** @returns {import("react-native").StyleProp<import("react-native").TextStyle> | null} Disabled button text style when needed. */
+  disabledButtonTextStyle() {
+    if (!this.props.confirmDisabled) {
+      return null
+    }
+
+    return [defaultStyles.disabledButtonText, this.props.styles.disabledButtonText]
   }
 
   /** @returns {void} */

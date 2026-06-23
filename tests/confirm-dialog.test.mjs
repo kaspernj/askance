@@ -44,3 +44,35 @@ test("queues dialogs until the active dialog is resolved", async () => {
 
   unsubscribe()
 })
+
+test("preserves customized dialog options for hosts", async () => {
+  let activeRequest
+  const content = {type: "content"}
+  const testIDs = {
+    cancel: "customCancelButton",
+    confirm: "customConfirmButton",
+    message: "customMessage",
+    root: "customRoot"
+  }
+  const unsubscribe = subscribeConfirmDialog((request) => {
+    activeRequest = request
+  })
+
+  const promise = confirmDialog({
+    confirmDisabled: true,
+    content,
+    message: "Delete this?",
+    testIDs,
+    title: "Delete?"
+  })
+
+  assert.equal(activeRequest.confirmDisabled, true)
+  assert.equal(activeRequest.content, content)
+  assert.equal(activeRequest.message, "Delete this?")
+  assert.deepEqual(activeRequest.testIDs, testIDs)
+  assert.equal(activeRequest.title, "Delete?")
+  resolveConfirmDialog(activeRequest.id, false)
+  assert.equal(await promise, false)
+
+  unsubscribe()
+})
