@@ -1,7 +1,7 @@
 // @ts-check
 
 import React, {Component, useEffect, useState} from "react"
-import {Modal, Pressable, Text, View} from "react-native"
+import {Modal, Pressable, Text, View} from "react-native-propforge"
 import {resolveConfirmDialog, subscribeConfirmDialog} from "./confirm-dialog.js"
 
 /** @typedef {import("react").ReactNode} ReactNode */

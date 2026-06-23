@@ -14,7 +14,7 @@ const reactNativeMock = {
   View: componentFor("View")
 }
 const {default: ConfirmDialogHost} = await esmock.strict("../build/confirm-dialog-host.js", {
-  "react-native": reactNativeMock
+  "react-native-propforge": reactNativeMock
 })
 
 /**
