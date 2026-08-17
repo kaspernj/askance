@@ -67,7 +67,7 @@
     "fallow": "^2.88.3",
     "globals": "^17.7.0",
     "react": "^19.2.0",
-    "react-native": "^0.86.0",
+    "react-native": "^0.87.0",
     "react-test-renderer": "^19.2.0",
     "release-patch": "^1.0.0",
     "typescript": "^6.0.3",
