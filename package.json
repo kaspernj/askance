@@ -64,7 +64,7 @@
     "@types/react": "^19.2.14",
     "eslint": "^10.5.0",
     "esmock": "^2.7.3",
-    "fallow": "^2.88.3",
+    "fallow": "^3.20.0",
     "globals": "^17.7.0",
     "react": "^19.2.0",
     "react-native": "^0.86.0",
