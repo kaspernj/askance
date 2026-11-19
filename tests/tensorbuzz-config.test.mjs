@@ -3,6 +3,8 @@ import {readFileSync} from "node:fs"
 import test from "node:test"
 
 const configuration = readFileSync(new URL("../tensorbuzz.yml", import.meta.url), "utf8")
+const packageJson = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"))
+const fallowCi = readFileSync(new URL("../scripts/fallow-ci.mjs", import.meta.url), "utf8")
 
 function buildBlock(name) {
   const match = configuration.match(new RegExp(`  ${name}:\\n([\\s\\S]*?)(?=  build_|$)`))
@@ -46,4 +48,12 @@ test("TensorBuzz builds declare managed npm roots and ordered path filters", () 
     "!README.md",
     "!LICENSE"
   ])
+})
+
+test("fallow CI resolves a base when the lane omits origin/master", () => {
+  assert.equal(packageJson.scripts["fallow:ci"], "node scripts/fallow-ci.mjs")
+  assert.match(fallowCi, /origin\/master/)
+  assert.match(fallowCi, /origin\/HEAD/)
+  assert.match(fallowCi, /HEAD\^/)
+  assert.match(fallowCi, /'--gate', 'new-only'/)
 })

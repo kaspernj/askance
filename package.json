@@ -26,7 +26,7 @@
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf build tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
     "fallow:audit": "fallow audit --gate new-only",
-    "fallow:ci": "fallow audit --base origin/master --gate new-only --quiet",
+    "fallow:ci": "node scripts/fallow-ci.mjs",
     "fallow:scan": "fallow",
     "lint": "npm run eslint && npm run typecheck && npm run fallow",
     "prepare": "npm run build",
