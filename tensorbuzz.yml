@@ -11,15 +11,7 @@ builds:
     name: Tests
     dependency_roots:
       - path: .
-    paths:
-      - "src/**"
-      - "tests/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tsconfig*.json"
-      - "tensorbuzz.yml"
-      - "!README.md"
-      - "!LICENSE"
+    paths: []
     script:
       - npm run test
   build_2:
